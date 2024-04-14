@@ -6,6 +6,7 @@ import ReviewPage from './Reviews/ReviewPage';
 import LoginPage from './User/LoginPage';
 import RegisterPage from './User/RegisterPage';
 import ReviewList from './Reviews/ReviewList';
+import CommentList from './Comments/CommentsList';
 const router = createBrowserRouter([{
   path: '/',
   element: <App/>,
@@ -29,6 +30,10 @@ const router = createBrowserRouter([{
 {
   path: '/Reviews/:movieId',
   element: <ReviewList/>
+},
+{
+  path: '/comments/:reviewId',
+  element: <CommentList/>
 }
 ]);
 

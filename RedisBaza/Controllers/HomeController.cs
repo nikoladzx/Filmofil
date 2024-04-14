@@ -69,14 +69,14 @@ namespace RedisBaza.Controllers
 
         [HttpPost]
         [Route("CreateMovie/{title}/{description}/{pictureurl}")]
-        public IActionResult CreateMovie(string title, string description, string pictureUrl)
+        public IActionResult CreateMovie(string title, string description, string pictureurl)
         {
             string id = GetNextMovieID();
             redis.Set("movie:" + id + ":title", title);
             redis.Set("movie:" + id + ":description", description);
             redis.Set("movie:" + id + ":rating", 0);
             redis.Set("movie:" + id + ":numberofratings", 0);
-            redis.Set("movie" + id + ":pictureUrl", pictureUrl);
+            redis.Set("movie:" + id + ":pictureurl", pictureurl);
             redis.AddItemToSet("movie:all", id);
             return Ok(new { id });
         }
@@ -100,7 +100,7 @@ namespace RedisBaza.Controllers
                 var result1 = redis.Get<string>("movie:" + id + ":description");
                 var result2 = Convert.ToDouble(redis.Get<string>("movie" + id + ":rating"));
                 var result3 = Convert.ToInt32(redis.Get<string>("movie" + id + ":numberofratings"));
-                var result4 = redis.Get<string>("movie:" + id + ":pictureUrl");
+                var result4 = redis.Get<string>("movie:" + id + ":pictureurl");
 
                 if (result3 != 0)
                 {
@@ -195,7 +195,7 @@ namespace RedisBaza.Controllers
             var result1 = redis.Get<string>("movie:" + movieID + ":description");
             var result2 = Convert.ToDouble(redis.Get<string>("movie" + movieID + ":rating"));
             var result3 = Convert.ToInt32(redis.Get<string>("movie" + movieID + ":numberofratings"));
-            var result4 = redis.Get<string>("movie:" + movieID + ":pictureUrl");
+            var result4 = redis.Get<string>("movie:" + movieID + ":pictureurl");
 
             if (result3 != 0)
             {
