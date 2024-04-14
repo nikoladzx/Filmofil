@@ -30,16 +30,27 @@ export default function ReviewCard({review} : Prop)
         review && agent.Home.getReview(review)
         .then(r => setRev(r.review))
         .catch(error => console.log(error))
-    },[rev])
+    },[])
     console.log(rev);
+    const [clickUpvote, setClickUpvote] = useState (false);
+    const [clickDownvote, setClickDownvote] = useState (false);
+  function handleDownvote(): void {
+    setClickDownvote(!clickDownvote);
+  }
+
+  function handleUpvote(): void {
+    setClickUpvote(!clickUpvote);
+
+  }
+
     return (
         <>    
-
+        {rev?.rating + "ovo je rating"}
         <Paper
         sx={{
           p: 2,
           margin: 'auto',
-          maxWidth: 500,
+          maxWidth: 555,
           flexGrow: 1,
           backgroundColor: (theme) =>
             theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -49,14 +60,19 @@ export default function ReviewCard({review} : Prop)
    <Grid container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 
         <Grid container xs = {2}> 
-        <Grid item xs = {12} sx ={{p: 2}}>
-            {rev?.upvotes === null ? "0" : rev?.upvotes}
-            <ThumbUpIcon></ThumbUpIcon>
+        <Grid item xs = {12} sx ={{p: 3}}>
+          <Typography sx = {{p: 1}}>{rev?.upvotes === null ? "0" : rev?.upvotes}</Typography>
+            {clickUpvote ? <ThumbUpIcon color="primary" onClick={()=> handleUpvote()}></ThumbUpIcon> :
+             <ThumbUpIcon  onClick={()=> handleUpvote()}></ThumbUpIcon>}
+            
             
             </Grid>
-            <Grid item xs = {12} sx ={{p: 2}}>
-            {rev?.downvotes === 0 ? "0" : rev?.downvotes}
-            <ThumbDownIcon>{rev?.downvotes}</ThumbDownIcon>
+            <Grid item xs = {12} sx ={{pl: 3}}>
+            {clickDownvote ? <ThumbDownIcon color="primary" onClick={()=> handleDownvote()}></ThumbDownIcon> :
+             <ThumbDownIcon  onClick={()=> handleDownvote()}></ThumbDownIcon>}
+
+            <Typography sx = {{pl: 1}}>{rev?.downvotes === 0 ? "0" : rev?.downvotes}</Typography>
+            
         </Grid>
         <Grid item xs = {12} sx ={{p: 2}}>
             {rev?.time}
@@ -67,10 +83,10 @@ export default function ReviewCard({review} : Prop)
           <Grid item xs container direction="column" spacing={2}  sx = {{  justifyContent: 'center', alignItems: 'center', paddingBottom: 3, pr:3}}>
             <Grid item xs>
               <Typography gutterBottom variant="h4" component="div" sx = {{color: "primary.main"}} >
-                {rev?.text}
+              <Box sx={{ color:"primary.main" }}>{labels[rev ? rev.rating : 0]}</Box>
               </Typography>
               </Grid>
-              <Grid item xs>
+              <Grid item sx = {{mr : 3}}>
               <Typography variant="body2" color="text.secondary" >
               {rev?.text}
               </Typography>
@@ -81,15 +97,16 @@ export default function ReviewCard({review} : Prop)
               
               </Grid>
               
-              <Grid item xs={4}>
+              <Grid item xs={4} sx={{ mt:7, mr: 5}}>
                     <Button component={Link}
                      to = {`/comments/${review}`}
-                     ></Button>
+                     >Comments</Button>
               </Grid>
-              <Grid item xs = {3} sx={{ mt: 0 }}>
-              <Box sx={{ ml: 6, color:"primary.main" }}>{labels[1]}</Box>
+              <Grid item xs = {3} sx={{ mt:7 }}>
+              
             <Rating  
-            value={rev?.rating}
+            name="half-rating-read"
+            value={rev && rev.rating}
             readOnly
             precision={0.5}
              />
