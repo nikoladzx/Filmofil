@@ -1,19 +1,42 @@
 
-import './App.css'
+
+import { Grid } from '@mui/material'
 import Header from './Header/Header'
 import Movies from './Movies/movies'
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
+const theme = createTheme({
+   palette:{
+    primary:{
+      main: "#1760a5",
+      light: "skyblue"
+    },
+    secondary:{
+      main: '#15c630',
 
-function App() {
+    }
+   }
+});
 
-
-  return (
+export default function App() {
+   return (
+      <ThemeProvider theme={theme}>
     <>
-    <Header/>
-    <Movies/>
+  
+  <Grid container spacing={5} sx={{}}>
+  <Grid item xs={12}>
+  <Header/>
+  </Grid>
 
-    </>
-  )
+  <Grid item xs={12}>
+  <Movies/>
+    </Grid>
+
+
+  </Grid>
+  
+  </>
+      </ThemeProvider>
+   )
 }
 
-export default App

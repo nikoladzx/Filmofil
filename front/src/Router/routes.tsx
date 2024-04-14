@@ -1,6 +1,7 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
-import App from "../App";
+
 import Movies from "../Movies/movies";
+import App from "../App";
 
 
 export const router=createBrowserRouter([

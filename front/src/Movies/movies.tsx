@@ -21,7 +21,7 @@ return (
         {movies.map(m => 
             
 
-    <Grid item xs={6}>
+    <Grid item xs={12} >
         <MovieCard movie = {m}/>
     </Grid>)}
 </Grid>
