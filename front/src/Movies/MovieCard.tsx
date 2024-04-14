@@ -1,5 +1,8 @@
 import {   Box, Button, ButtonBase, Grid, Paper, Rating, Typography, styled } from "@mui/material";
+
 import { Movie } from "./movie";
+import { Link } from "react-router-dom";
+
 
 interface Props {
     movie: Movie;
@@ -27,6 +30,7 @@ export default function MovieCard({movie} : Props)
 {
     return (
         <>    
+        
         <Paper
         sx={{
           p: 2,
@@ -37,6 +41,7 @@ export default function MovieCard({movie} : Props)
             theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         }}
       >
+        <Link to={"movies"}></Link>
    <Grid container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid item>
           <ButtonBase sx={{ width: 155, height: 155 }}>
@@ -55,17 +60,19 @@ export default function MovieCard({movie} : Props)
               {" gfdsagdsfagewargas gsdfa gdsa gasd gar eswgras gsag eawsg sdag afsd geswa ga fdas fasd fsad fsa fdsaf sadf asdf sads "}
               </Typography>
             </Grid>
-            <Grid  container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' , pt: 4, pl: 5 }}>
+            <Grid  container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' , pt: 4, pl: 5, mr : 2 }}>
               <Grid item xs={4} sx={{mv : 10, ml : -2}}>
-
-              <Button sx={{ cursor: 'pointer', color:"text.main" }} variant="contained">
-                About
+              
+              <Button  component={Link} to="reviews"
+              sx={{ cursor: 'pointer', color:"text.main" }} variant="contained">
+                Reviews
               </Button>
               </Grid>
-
+              
               <Grid item xs={4}>
-
-              <Button sx={{ cursor: 'pointer', color:"text.main" }} variant="contained">
+              
+              <Button component={Link} to={`/addreview/${movie.id}`}
+                 sx={{ cursor: 'pointer', color:"text.main", pr: 2 }} variant="contained">
                 Review
               </Button>
               </Grid>

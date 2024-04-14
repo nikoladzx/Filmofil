@@ -134,7 +134,7 @@ namespace RedisBaza.Controllers
             redis.IncrBy("movie" + movieID + ":rating", rating);
             redis.Incr("movie" + movieID + ":numberofratings");
 
-            return Ok("MZ");
+            return Ok("Congrats, you've added a movie!");
         }
         [HttpGet]
         [Route("GetReview/{reviewID}")]
@@ -144,6 +144,44 @@ namespace RedisBaza.Controllers
 
             //var ratings = redis.GetAllItemsFromList("review:" + reviewID + ":rating");
             return Ok(new { review });
+        }
+
+        [HttpGet]
+        [Route("GetReviews/{movieID}")]
+        public IActionResult GetReviews(string movieID)
+        {
+            var reviews = redis.GetAllItemsFromList("movie:" + movieID + ":review");
+            //redis.PushItemToList("movie:" + movieID + ":review", id);
+            //var ratings = redis.GetAllItemsFromList("review:" + reviewID + ":rating");
+            return Ok(new { reviews });
+        }
+        [HttpGet]
+        [Route("GetMovie/{movieID}")]
+        public IActionResult GetMovie(string movieID)
+        {
+            var result = redis.Get<string>("movie:" + movieID + ":title");
+            var result1 = redis.Get<string>("movie:" + movieID + ":description");
+            var result2 = Convert.ToDouble(redis.Get<string>("movie" + movieID + ":rating"));
+            var result3 = Convert.ToInt32(redis.Get<string>("movie" + movieID + ":numberofratings"));
+            var result4 = redis.Get<string>("movie:" + movieID + ":pictureUrl");
+
+            if (result3 != 0)
+            {
+                double x = result2 / result3;
+                double z = Math.Round(x, 2);
+
+
+               return Ok(new Movie { ID = movieID, Title = result, Description = result1, Rating = z, NumberOfRatings = result3, PictureUrl = result4 });
+            }
+            if (result3 == 0)
+            {
+                double x = result2 / result3;
+                double z = Math.Round(x, 2);
+
+
+                return Ok(new Movie { ID = movieID, Title = result, Description = result1, Rating = 0, NumberOfRatings = 0, PictureUrl = result4 });
+            }
+            return BadRequest("Movie with that ID doesnt exist at all :(");  
         }
     }
 
