@@ -1,13 +1,12 @@
-import {   Box, Button, ButtonBase, Grid, Paper, Rating, Typography, styled } from "@mui/material";
+import {   Box, ButtonBase, Grid, Paper, Rating, Typography, styled } from "@mui/material";
 
-import { Movie } from "./movie";
 import { Link } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import agent from "../API/agent";
+import { Review } from "./Review";
 
-
-interface Props {
-    movie: Movie;
- 
+interface Prop {
+    review:string;
 }
 const Img = styled('img')({
   margin: 'auto',
@@ -27,11 +26,16 @@ const labels: { [index: string]: string } = {
   4.5: 'Excellent',
   5: 'Excellent+',
 };
-export default function MovieCard({movie} : Props)
-{
+export default function ReviewCard({review} : Prop)
+{   const [rev, setRev] = useState<Review | null>(null)
+    useEffect(()=>{
+        review && agent.Home.getReview(review)
+        .then(r => setRev(r))
+        .catch(error => console.log(error))
+    },[])
     return (
         <>    
-        
+
         <Paper
         sx={{
           p: 2,
@@ -53,7 +57,7 @@ export default function MovieCard({movie} : Props)
           <Grid item xs container direction="column" spacing={2}  sx = {{  justifyContent: 'center', alignItems: 'center', paddingBottom: 3, pr:3}}>
             <Grid item xs>
               <Typography gutterBottom variant="h4" component="div" sx = {{color: "primary.main"}} >
-                {movie.title}
+                {rev?.text}
               </Typography>
               </Grid>
               <Grid item xs>
@@ -64,23 +68,16 @@ export default function MovieCard({movie} : Props)
             <Grid  container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' , pt: 4, pl: 5, mr : 2 }}>
               <Grid item xs={4} sx={{mv : 10, ml : -2}}>
               
-              <Button  component={Link} to={`/reviews/${movie.id}`}
-              sx={{ cursor: 'pointer', color:"text.main" }} variant="contained">
-                Reviews
-              </Button>
+              
               </Grid>
               
               <Grid item xs={4}>
-              
-              <Button component={Link} to={`/addreview/${movie.id}`}
-                 sx={{ cursor: 'pointer', color:"text.main", pr: 2 }} variant="contained">
-                Review
-              </Button>
+
               </Grid>
               <Grid item xs = {3} sx={{ mt: 0 }}>
               <Box sx={{ ml: 6, color:"primary.main" }}>{labels[3]}</Box>
             <Rating   name="text-feedback"
-            value={movie.rating}
+            value={rev?.rating}
             readOnly
             precision={0.5}
              />

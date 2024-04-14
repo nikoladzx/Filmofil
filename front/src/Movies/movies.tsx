@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import agent from "../API/agent";
 import { Movie } from "./movie";
 import MovieCard from "./MovieCard";
+import React from "react";
 
 
 

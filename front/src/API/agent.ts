@@ -18,7 +18,7 @@ const Home = {
     list: () => requests.get('/GetMovies'),
     addMovie: (title : string, description :string) => requests.post(`createmovie/${title}/${description}`,{}),
     getMovie: (id : string) => requests.get(`GetMovie/${id}`),
-    getReviews: (id : string) => requests.get('GetReviews/' + {id}),
+    getReviews: (id : string) => requests.get(`GetReviews/${id}`),
     getReview: (id : string) => requests.get('GetReview/' + {id}),
     addReview: (text : string, authorID : string, movieID :string, rating : number) => requests.post(`CreateReview/${text}/${authorID}/${movieID}/${rating}`,{}),
 }

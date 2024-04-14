@@ -1,14 +1,51 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using RedisBaza.Models;
+using RedisBaza.Services;
 using ServiceStack.Redis;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace RedisBaza.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _hostEnvironment;
         readonly RedisClient redis = new("redis://localhost:6379");
+        public HomeController(IConfiguration configuration, IUserService userService, IWebHostEnvironment hostEnvironment)
+        {
+            _configuration = configuration;
+            _userService = userService;
+            this._hostEnvironment = hostEnvironment;
+        }
 
+        private string CreateToken(User u, string role)
+        {
+            List<Claim> claims = new List<Claim>
+            {
 
+               new Claim(ClaimTypes.NameIdentifier, u.Id),
+               new Claim(ClaimTypes.Name, u.Username),
+               new Claim(ClaimTypes.Role, role),
+               new Claim(ClaimTypes.Expiration, DateTime.Now.AddMinutes(120).ToString())
+            };
+            var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+                _configuration.GetSection("JWTSettings:TokenKey").Value));
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(60),
+                signingCredentials: creds);
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+        }
         private string GetNextReviewID()
         {
             long nextCounterKey = redis.Incr("next:review:id");
@@ -85,16 +122,11 @@ namespace RedisBaza.Controllers
             return Ok(new { movies });
         }
         [HttpPost]
-        [Route("CreateUser/{username}/{role}")]
-        public IActionResult CreateUser(string username, string password, bool Role)
+        [Route("CreateUser/{username}")]
+        public IActionResult CreateUser(string username, string password)
         {
             string id = GetNextUserID();
             redis.Set("user:" + id + ":username", username);
-            redis.Set("user:" + id + ":password", password);
-            if (Role == false)
-                redis.Set("user:" + id + ":role", 0);
-            if (Role == true)
-                redis.Set("user:" + id + ":role", 1);
             return Ok(new { id });
         }
         [HttpGet]

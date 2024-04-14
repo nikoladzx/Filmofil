@@ -13,9 +13,10 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
+import { Link } from 'react-router-dom';
 
 const pages = ['Movies'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
 
 export default function Header() {
 
@@ -36,6 +37,10 @@ export default function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+
+
+
 
   return (
     <AppBar position="static">
@@ -150,11 +155,14 @@ export default function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+             
+                <MenuItem  component={Link} to="/Login">
+                  <Typography textAlign="center">{"Login"}</Typography>
                 </MenuItem>
-              ))}
+                <MenuItem  component={Link} to="/Register">
+                  <Typography textAlign="center">{"Register"}</Typography>
+                </MenuItem>
+              
             </Menu>
           </Box>
         </Toolbar>

@@ -35,3 +35,10 @@ C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\obj\Debug\net7.0\refint\Redi
 C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\obj\Debug\net7.0\RedisBaza.pdb
 C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\obj\Debug\net7.0\RedisBaza.genruntimeconfig.cache
 C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\obj\Debug\net7.0\ref\RedisBaza.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll

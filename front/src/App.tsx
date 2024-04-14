@@ -4,6 +4,7 @@ import { Grid } from '@mui/material'
 import Header from './Header/Header'
 import Movies from './Movies/movies'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
+import React from 'react';
 
 const theme = createTheme({
    palette:{
