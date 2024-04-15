@@ -12,6 +12,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ChangeEvent } from 'react';
 import agent from '../API/agent';
 import { useNavigate } from 'react-router-dom';
+import { Checkbox } from '@mui/material';
 
 
 
@@ -22,10 +23,11 @@ export default function RegisterPage() {
     const navigate = useNavigate();
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
+    const [isAdmin, setIsAdmin] = React.useState(false);
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     
-    agent.Home.register(username, password, false)
+    agent.Home.register(username, password, isAdmin)
     .then(s => console.log(s))
     .catch(err => console.log(err))
     .finally(()=> navigate("/"))
@@ -40,6 +42,11 @@ export default function RegisterPage() {
     function handlePassword(event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         setPassword(event.target.value);
     }
+
+  function handleAdmin(): void {
+    setIsAdmin(!isAdmin);
+
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -87,6 +94,20 @@ export default function RegisterPage() {
                 />
               </Grid>
             </Grid>
+            <Grid container xs = {12}>
+              <Grid item xs= {2}>
+              <Checkbox 
+        value = {isAdmin}
+        onChange={handleAdmin}
+        sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
+      />
+              </Grid>
+              <Grid item xs={10} sx ={{pr: 5, mt:1}}>
+              <Typography variant="h6">ADMIN</Typography>
+              </Grid>
+            </Grid>
+ 
+  
             <Button
               type="submit"
               fullWidth

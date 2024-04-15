@@ -22,7 +22,7 @@ const requests = {
 
 const Home = {
     list: () => requests.get('/GetMovies'),
-    addMovie: (title : string, description :string) => requests.post(`createmovie/${title}/${description}`,{}),
+    addMovie: (title : string, description :string, pictureurl : string) => requests.post(`createmovie/${title}/${description}/${pictureurl}`,{}),
     getMovie: (id : string) => requests.get(`GetMovie/${id}`),
     getReviews: (id : string) => requests.get(`GetReviews/${id}`),
     getReview: (id : string) => requests.get(`GetReview/${id}`),

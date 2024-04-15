@@ -47,7 +47,7 @@ export default function MovieCard({movie} : Props)
    <Grid container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Grid item>
           <ButtonBase sx={{ width: 155, height: 155 }}>
-            <Img alt="complex" src="Screenshot_6.jpg"  />
+            <Img alt="complex" src={movie.pictureUrl}  />
           </ButtonBase>
         </Grid>
         <Grid item xs={12} sm container >

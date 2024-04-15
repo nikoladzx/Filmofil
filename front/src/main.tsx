@@ -8,6 +8,7 @@ import RegisterPage from './User/RegisterPage';
 import ReviewList from './Reviews/ReviewList';
 import CommentList from './Comments/CommentsList';
 import { UserProvider } from './Context/useAuth';
+import CreateMovie from './Movies/CreateMovie';
 const router = createBrowserRouter([{
   path: '/',
   element: <App/>,
@@ -15,6 +16,10 @@ const router = createBrowserRouter([{
 {
   path: '/addreview',
   element: <ReviewPage/>
+},
+{
+  path: '/movies',
+  element: <App/>
 },
 {
   path: '/addreview/:movieId',
@@ -27,6 +32,10 @@ const router = createBrowserRouter([{
 {
   path: '/Register',
   element: <RegisterPage/>
+},
+{
+  path: '/createmovie',
+  element: <CreateMovie/>
 },
 {
   path: '/Reviews/:movieId',

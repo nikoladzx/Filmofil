@@ -36,8 +36,8 @@ export default function LoginPage() {
 //         console.log(s.Token);
 //     })
 //    console.log(username);
-loginUser(username,password);
-navigate('/');
+  loginUser(username,password);
+  navigate('/movies');
 
   
   }

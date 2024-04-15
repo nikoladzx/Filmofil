@@ -16,9 +16,11 @@ import LiveTvIcon from '@mui/icons-material/LiveTv';
 
 import { useAuth } from '../Context/useAuth';
 import LoginPage from '../User/LoginPage';
+import { Link } from 'react-router-dom';
+
 
 const pages = ['Movies'];
-
+const adminpages = ['CreateMovie'];
 
 export default function Header() {
   
@@ -27,6 +29,8 @@ export default function Header() {
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   const {user, logout} = useAuth();
+
+
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -103,7 +107,13 @@ export default function Header() {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {pages.map((page) => (
+              {user?.role === "Admin" ? adminpages.map((page) => (
+                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">{page}</Typography>
+                </MenuItem>
+              )) 
+                          
+              :pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
@@ -130,9 +140,22 @@ export default function Header() {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            {user?.role==="Admin" ?
+            adminpages.map((page) => (
               <Button
-                
+                component={Link}
+                to ={`/${page}`}
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {page}
+              </Button>))
+            :
+            pages.map((page) => (
+              <Button
+                component={Link}
+                to ={`/${page}`}
                 key={page}
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
