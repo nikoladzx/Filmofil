@@ -13,16 +13,20 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import LiveTvIcon from '@mui/icons-material/LiveTv';
-import { Link } from 'react-router-dom';
+
+import { useAuth } from '../Context/useAuth';
+import LoginPage from '../User/LoginPage';
 
 const pages = ['Movies'];
 
 
 export default function Header() {
+  
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
+  const {getCurrentUser, user, logout} = useAuth();
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -37,6 +41,11 @@ export default function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  React.useEffect(()=>{
+     getCurrentUser();
+    console.log(user?.username);
+},[])
+
 
 
 
@@ -128,7 +137,7 @@ export default function Header() {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {"page"}
+                {page}
               </Button>
             ))}
           </Box>
@@ -155,13 +164,23 @@ export default function Header() {
               open={Boolean(anchorElUser)}
               onClose={handleCloseUserMenu}
             >
-             
-                <MenuItem  component={Link} to="/Login">
-                  <Typography textAlign="center">{"Login"}</Typography>
-                </MenuItem>
-                <MenuItem  component={Link} to="/Register">
-                  <Typography textAlign="center">{"Register"}</Typography>
-                </MenuItem>
+             {user ? <><MenuItem>
+              <Typography textAlign="center">{user.username}</Typography>
+            </MenuItem>
+            <MenuItem onClick={() => logout()} >
+            <Typography textAlign="center">{"Logout"}</Typography>
+          </MenuItem>
+          </>
+              :
+              <>
+              <MenuItem  component={LoginPage}>
+              <Typography textAlign="center">{"Login"}</Typography>
+            </MenuItem>
+
+            </>
+             }
+
+                
               
             </Menu>
           </Box>

@@ -8,10 +8,12 @@ import React from "react";
 
 
 export default function Movies() {
+
     const [movies, setMovies] = useState<Movie[] | []>([]);
     useEffect(()=>{
         agent.Home.list().then((data)=>setMovies(data.movies))
         .catch((error)=>console.log(error));
+        
     },[])
 
 console.log(movies);

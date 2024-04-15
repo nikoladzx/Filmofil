@@ -7,6 +7,12 @@ axios.defaults.withCredentials=true;
 const responseBody = (response: AxiosResponse)=> response.data;
 
 
+axios.interceptors.request.use(config => {
+    const token = localStorage.getItem('Token');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config
+})
+
 const requests = {
     get: (url: string) => axios.get(url).then(responseBody),
     post: (url: string, body : object) => axios.post(url, body).then(responseBody),
@@ -21,6 +27,9 @@ const Home = {
     getReviews: (id : string) => requests.get(`GetReviews/${id}`),
     getReview: (id : string) => requests.get(`GetReview/${id}`),
     addReview: (text : string, authorID : string, movieID :string, rating : number) => requests.post(`CreateReview/${text}/${authorID}/${movieID}/${rating}`,{}),
+    login: (username : string, password : string) => requests.post(`Login/${username}/${password}`,{}),
+    getCurrentUser: () => requests.get(`getcurrentuser`),
+    register: (username : string, password : string, role : boolean) => requests.post(`CreateUser/${username}/${password}/${role}`,{})
 }
 
 

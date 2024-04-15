@@ -122,7 +122,7 @@ namespace RedisBaza.Controllers
             return Ok(new { movies });
         }
         [HttpPost]
-        [Route("CreateUser/{username}/{role}")]
+        [Route("CreateUser/{username}/{password}/{role}")]
         public IActionResult CreateUser(string username, string password, bool role)
         {
             string id = GetNextUserID();

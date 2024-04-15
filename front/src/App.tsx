@@ -5,6 +5,7 @@ import Header from './Header/Header'
 import Movies from './Movies/movies'
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import React from 'react';
+import { UserProvider } from './Context/useAuth';
 
 const theme = createTheme({
    palette:{
@@ -23,7 +24,8 @@ export default function App() {
    return (
       <ThemeProvider theme={theme}>
     <>
-  
+  <UserProvider>
+
   <Grid container spacing={5} sx={{}}>
   <Grid item xs={12}>
   <Header/>
@@ -36,6 +38,7 @@ export default function App() {
 
   </Grid>
   
+  </UserProvider>
   </>
       </ThemeProvider>
    )
