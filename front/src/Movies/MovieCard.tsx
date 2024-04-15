@@ -16,6 +16,7 @@ const Img = styled('img')({
   maxHeight: '100%',
 });
 const labels: { [index: string]: string } = {
+  0: 'Still no rating',
   0.5: 'Terrible',
   1: 'Really Bad',
   1.5: 'Poor',
@@ -78,7 +79,7 @@ export default function MovieCard({movie} : Props)
               </Button>
               </Grid>
               <Grid item xs = {3} sx={{ mt: 0 }}>
-              <Box sx={{ ml: 6, color:"primary.main" }}>{labels[3]}</Box>
+              <Box sx={{ ml: 6, color:"primary.main" }}>{labels[movie.rating]}</Box>
             <Rating   name="text-feedback"
             value={movie.rating}
             readOnly

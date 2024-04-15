@@ -7,18 +7,20 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import agent from '../API/agent';
 import { Movie } from '../Movies/movie';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import { Rating } from '@mui/material';
 import { ChangeEvent } from 'react';
+import { useAuth } from '../Context/useAuth';
 
 
 
 
 export default function ReviewPage() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const navigate = useNavigate();
     const [movie, setMovie] = React.useState<Movie | null>(null);
     const [rating, setRating] = React.useState<number>(0);
     const [first, setFirst] = React.useState(true)
@@ -29,13 +31,15 @@ export default function ReviewPage() {
   };
   const {movieId} = useParams();
   console.log(movieId);
-
+  const {user} = useAuth();
+  console.log(user);
   React.useEffect(()=>{
     if (!first){
        // movieId && 
-        agent.Home.addReview(text, "1", movieId!, rating)
+        user && agent.Home.addReview(text, user.id, movieId!, rating)
        .then(s => console.log(s))
        .catch(error => console.log(error))
+       navigate('/');
         
     }
     if (first){

@@ -6,6 +6,8 @@ import agent from "../API/agent";
 import { Review } from "./Review";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import { useAuth } from "../Context/useAuth";
+
 
 interface Prop {
     review:string;
@@ -25,26 +27,64 @@ const labels: { [index: string]: string } = {
 };
 export default function ReviewCard({review} : Prop)
 {   const [rev, setRev] = useState<Review | null>(null)
+  // const [clickUpvote, setClickUpvote] = useState (false);
+  // const [clickDownvote, setClickDownvote] = useState (false);
+    const [change, setChange] = useState(false);
+    const {user} = useAuth();
+    const [votes, setVotes] = useState([]);
     useEffect(()=>{
         
         review && agent.Home.getReview(review)
         .then(r => setRev(r.review))
-        .catch(error => console.log(error))
-    },[])
+        .catch(error => console.log(error));
+        review && agent.Home.getVotes(review, user!.id)
+        .then(r=> setVotes(r))
+        .catch(err => console.log(err))
+    },[change])
     console.log(rev);
-    const [clickUpvote, setClickUpvote] = useState (false);
-    const [clickDownvote, setClickDownvote] = useState (false);
+    const {upvotes, downvotes, clicku, clickd} = {...votes}
   function handleDownvote(): void {
-    setClickDownvote(!clickDownvote);
+    if (clickd === 0)
+      {
+        agent.Home.addDownvote(user!.id, review, 1)
+        .then(x => console.log(x))
+        .catch(err => console.log(err))
+        .finally(()=> setChange(true));
+      }
+      else 
+        {
+          agent.Home.addDownvote(user!.id, review, -1)
+          .then(x => console.log(x))
+          .catch(err => console.log(err))
+          .finally(()=> setChange(false));
+          
+        }
+        
   }
 
-  function handleUpvote(): void {
-    setClickUpvote(!clickUpvote);
+console.log(clicku +"mz?")
 
+function handleUpvote(): void {
+ 
+    if (clicku === 0)
+      {
+        agent.Home.addUpvote(user!.id, review, 1)
+        .then(x => console.log(x))
+        .catch(err => console.log(err))
+        .finally(()=> setChange(true));
+      }
+      if (clicku === 1)
+        {
+          agent.Home.addUpvote(user!.id,review, -1)
+          .then(x => console.log(x))
+          .catch(err => console.log(err))
+          .finally(()=> setChange(false));
+        }
   }
 
     return (
-        <>    
+        <>  
+        
         {rev?.rating + "ovo je rating"}
         <Paper
         sx={{
@@ -61,17 +101,17 @@ export default function ReviewCard({review} : Prop)
 
         <Grid container xs = {2}> 
         <Grid item xs = {12} sx ={{p: 3}}>
-          <Typography sx = {{p: 1}}>{rev?.upvotes === null ? "0" : rev?.upvotes}</Typography>
-            {clickUpvote ? <ThumbUpIcon color="primary" onClick={()=> handleUpvote()}></ThumbUpIcon> :
-             <ThumbUpIcon  onClick={()=> handleUpvote()}></ThumbUpIcon>}
+          <Typography sx = {{p: 1}}>{upvotes}</Typography>
+            {clicku ? <ThumbUpIcon color="primary" onClick={()=>handleUpvote()}></ThumbUpIcon> :
+             <ThumbUpIcon  onClick={()=>handleUpvote()}></ThumbUpIcon>}
             
             
             </Grid>
             <Grid item xs = {12} sx ={{pl: 3}}>
-            {clickDownvote ? <ThumbDownIcon color="primary" onClick={()=> handleDownvote()}></ThumbDownIcon> :
+            {clickd ? <ThumbDownIcon color="primary" onClick={()=> handleDownvote()}></ThumbDownIcon> :
              <ThumbDownIcon  onClick={()=> handleDownvote()}></ThumbDownIcon>}
 
-            <Typography sx = {{pl: 1}}>{rev?.downvotes === 0 ? "0" : rev?.downvotes}</Typography>
+            <Typography sx = {{pl: 1}}>{downvotes}</Typography>
             
         </Grid>
         <Grid item xs = {12} sx ={{p: 2}}>

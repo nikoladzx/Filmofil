@@ -131,6 +131,7 @@ namespace RedisBaza.Controllers
                 return BadRequest("User already exists");
             //{ return BadRequest("Vec postoji neko sa tim usernameom"); }
             redis.Set(username + ":pw:", password);
+            redis.Set(username + ":id:", id);
             var users = redis.GetAllItemsFromSet(username);
             if (role == false)
              redis.Set(username + ":role:", "User");
@@ -171,8 +172,9 @@ namespace RedisBaza.Controllers
             }
             var role = redis.Get<string>(username + ":role:");
             var password = redis.Get<string>(username + ":pw:");
+            var id = redis.Get<string>(username + ":id:");
             User u = new User
-            {
+            {   Id=id,
                 Username = username,
                 Password = password,
                 Role = role
@@ -198,8 +200,9 @@ namespace RedisBaza.Controllers
                 return BadRequest("user with that username doesnt have that password");
             
             var role = redis.Get<string>(username + ":role:");
+            var id = redis.Get<string>(username + ":id:");
             User u = new User
-            {
+            { Id = id,
                 Username = username,
                 Password = password,
                 Role = role
@@ -237,6 +240,8 @@ namespace RedisBaza.Controllers
             redis.AddItemToSortedSet("movie:" + movieID + ":reviewssorted", id, 0);
             redis.PushItemToList("user:" + authorID + ":review", id);
             redis.Set("review:" + id + ":review", review);
+            redis.Set("review:" + id + ":upvotes", 0);
+            redis.Set("review:" + id + ":downvotes", 0);
 
 
 
@@ -246,6 +251,52 @@ namespace RedisBaza.Controllers
 
             return Ok("Congrats, you've added a movie!");
         }
+
+
+        [HttpPost]
+        [Route("AddUpvote/{authorID}/{reviewID}/{number}")]
+        public IActionResult AddUpvote( string authorID, string reviewID, int number)
+        {
+     
+            var d = redis.Get<int>(authorID + ":" + reviewID + ":clicku");
+
+            if (number > 0 && d == 0)
+            {
+                redis.Set(authorID + ":" + reviewID + ":clicku", 1);
+                redis.IncrBy("review:" + reviewID + ":upvotes", number);
+                return Ok("Congrats you've changed an zm!");
+            }
+            if (number < 0 && d == 1)
+            {
+                redis.Set(authorID + ":" + reviewID + ":clicku", 0);
+                redis.IncrBy("review:" + reviewID + ":upvotes", number);
+                return Ok("Congrats you've changed an mz!");
+            }
+            return Ok("Caaaaa!");
+        }
+        [HttpPost]
+        [Route("AddDownvote/{authorID}/{reviewID}/{number}")]
+        public IActionResult AddDownvote(string authorID, string reviewID, int number)
+        {
+            
+            var d = redis.Get<int>(authorID + ":" + reviewID + ":clickd");
+
+            
+            if (number>0 && d==0)
+            {
+                redis.Set(authorID + ":" + reviewID + ":clickd", 1);
+                redis.IncrBy("review:" + reviewID + ":downvotes", number);
+                return Ok("Congrats you've changed an downvote!");
+            }
+            if (number < 0 && d==1)
+            {
+                redis.Set(authorID + ":" + reviewID + ":clickd", 0);
+                redis.IncrBy("review:" + reviewID + ":downvotes", number);
+                return Ok("Congrats you've changed an downvote!");
+            }
+
+            return Ok("Congrats you've changed an downvote!");
+        }
         [HttpGet]
         [Route("GetReview/{reviewID}")]
         public IActionResult GetReview(string reviewID)
@@ -254,6 +305,19 @@ namespace RedisBaza.Controllers
 
             //var ratings = redis.GetAllItemsFromList("review:" + reviewID + ":rating");
             return Ok(new { review });
+        }
+
+        [HttpGet]
+        [Route("GetUpDownvotes/{reviewID}/{authorID}")]
+        public async Task<ActionResult> GetUpDownvotes(string reviewID, string authorID)
+        {
+            var clicku = redis.Get<int>(authorID + ":" + reviewID + ":clicku");
+            var clickd = redis.Get<int>(authorID + ":" + reviewID + ":clickd");
+            var upvotes = redis.Get<int>("review:" + reviewID + ":upvotes");
+            var downvotes = redis.Get<int>("review:" + reviewID + ":downvotes");
+
+            //var ratings = redis.GetAllItemsFromList("review:" + reviewID + ":rating");
+            return  Ok(new { upvotes, downvotes, clicku, clickd });
         }
 
         [HttpGet]

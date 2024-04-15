@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import agent from "../API/agent";
 import { useParams } from "react-router-dom";
 import ReviewCard from "./ReviewCard";
+import Header from "../Header/Header";
+import { UserProvider } from "../Context/useAuth";
 
 
 export default function ReviewList(){
@@ -16,7 +18,9 @@ export default function ReviewList(){
       .catch(error => console.log(error))
     },[])
     console.log(reviews)
-    return (
+    return (<>
+      <UserProvider>
+        <Header/>  
         <Grid container spacing ={2}>
            
             {reviews.map(r=>
@@ -29,7 +33,7 @@ export default function ReviewList(){
    
         </Grid>
             
-        
-        
+        </UserProvider>
+        </>
     )
 }

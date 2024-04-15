@@ -12,6 +12,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { ChangeEvent } from 'react';
 import { useAuth } from '../Context/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -23,6 +24,7 @@ export default function LoginPage() {
     const [username, setUsername] = React.useState("");
     const [password, setPassword] = React.useState("");
     const {loginUser} = useAuth();
+    const navigate = useNavigate();
 
   const handleSubmit = () => {
 //     agent.Home.login(username,password)
@@ -35,6 +37,8 @@ export default function LoginPage() {
 //     })
 //    console.log(username);
 loginUser(username,password);
+navigate('/');
+
   
   }
 

@@ -26,7 +26,7 @@ export default function Header() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-  const {getCurrentUser, user, logout} = useAuth();
+  const {user, logout} = useAuth();
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -42,7 +42,7 @@ export default function Header() {
     setAnchorElUser(null);
   };
   React.useEffect(()=>{
-     getCurrentUser();
+     
     console.log(user?.username);
 },[])
 

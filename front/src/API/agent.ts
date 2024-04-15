@@ -29,7 +29,10 @@ const Home = {
     addReview: (text : string, authorID : string, movieID :string, rating : number) => requests.post(`CreateReview/${text}/${authorID}/${movieID}/${rating}`,{}),
     login: (username : string, password : string) => requests.post(`Login/${username}/${password}`,{}),
     getCurrentUser: () => requests.get(`getcurrentuser`),
-    register: (username : string, password : string, role : boolean) => requests.post(`CreateUser/${username}/${password}/${role}`,{})
+    register: (username : string, password : string, role : boolean) => requests.post(`CreateUser/${username}/${password}/${role}`,{}),
+    getVotes: (reviewId : string, authorID:string) => requests.get(`GetUpDownvotes/${reviewId}/${authorID}`),
+    addUpvote: (authorID : string,reviewId:string, number : number) => requests.post(`AddUpvote/${authorID}/${reviewId}/${number}`, {}),
+    addDownvote: (authorID : string, reviewId:string, number : number) => requests.post(`AddDownvote/${authorID}/${reviewId}/${number}`, {})
 }
 
 

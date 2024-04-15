@@ -7,6 +7,7 @@ import LoginPage from './User/LoginPage';
 import RegisterPage from './User/RegisterPage';
 import ReviewList from './Reviews/ReviewList';
 import CommentList from './Comments/CommentsList';
+import { UserProvider } from './Context/useAuth';
 const router = createBrowserRouter([{
   path: '/',
   element: <App/>,
@@ -40,8 +41,10 @@ const router = createBrowserRouter([{
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-
-    <RouterProvider router={router}/>
+<UserProvider>
+<RouterProvider router={router}/>
+</UserProvider>
+   
 
   </React.StrictMode>,
 )
