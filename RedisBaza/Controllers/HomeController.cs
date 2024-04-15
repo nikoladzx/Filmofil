@@ -27,10 +27,10 @@ namespace RedisBaza.Controllers
             List<Claim> claims = new List<Claim>
             {
 
-               new Claim(ClaimTypes.NameIdentifier, u.Id),
+              // new Claim(ClaimTypes.NameIdentifier, u.Id),
                new Claim(ClaimTypes.Name, u.Username),
+               new Claim(ClaimTypes.Expiration, DateTime.Now.AddMinutes(120).ToString()),
                new Claim(ClaimTypes.Role, role),
-               new Claim(ClaimTypes.Expiration, DateTime.Now.AddMinutes(120).ToString())
             };
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
                 _configuration.GetSection("JWTSettings:TokenKey").Value));
@@ -122,21 +122,99 @@ namespace RedisBaza.Controllers
             return Ok(new { movies });
         }
         [HttpPost]
-        [Route("CreateUser/{username}")]
-        public IActionResult CreateUser(string username, string password)
+        [Route("CreateUser/{username}/{role}")]
+        public IActionResult CreateUser(string username, string password, bool role)
         {
             string id = GetNextUserID();
-            redis.Set("user:" + id + ":username", username);
-            return Ok(new { id });
+            //var users = redis.GetAllItemsFromSet("user:all");
+            if (redis.GetAllItemsFromSet(username) == null)
+                return BadRequest("User already exists");
+            //{ return BadRequest("Vec postoji neko sa tim usernameom"); }
+            redis.Set(username + ":pw:", password);
+            var users = redis.GetAllItemsFromSet(username);
+            if (role == false)
+             redis.Set(username + ":role:", "User");
+            if (role == true)
+             redis.Set(username + ":role:", "Admin");
+
+            User u = new User
+            {
+                Username = username,
+                Password = password,
+                Id = id,
+                Role = redis.Get<string>(username + ":role:")
+            };
+            string Token = CreateToken(u, redis.Get<string>(username + ":role:"));
+            return Ok(new { User = u,
+            token = Token});
         }
         [HttpGet]
         [Route("GetUsername/{userID}")]
         public IActionResult GetUserUsername(string userID)
         {
             var username = redis.Get<string>("user:" + userID + ":username");
+            if (username != null)
+            {
+                return BadRequest("Username doesnt exist");
+            }
 
             return Ok(new { username });
         }
+
+        [HttpGet]
+        [Route("GetCurrentUser")]
+        public IActionResult GetCurrentUser()
+        {
+            var username =_userService.GetMyName();
+            if (username == null) {
+                return BadRequest("No one is logged in!");
+            }
+            var role = redis.Get<string>(username + ":role:");
+            var password = redis.Get<string>(username + ":pw:");
+            User u = new User
+            {
+                Username = username,
+                Password = password,
+                Role = role
+            };
+            string Token = CreateToken(u, role);
+            return Ok(new
+            {
+                Username = username,
+                Role = role,
+                Token = Token
+            });          
+        }
+
+        [HttpPost]
+        [Route("Login/{username}/{password}")]
+        public IActionResult Login(string username, string password)
+        {
+            var pword = redis.Get<string>(username + ":pw:");
+
+            if (pword == null)
+                return BadRequest("user with that username doesnt exist");
+            if (pword != password)
+                return BadRequest("user with that username doesnt have that password");
+            
+            var role = redis.Get<string>(username + ":role:");
+            User u = new User
+            {
+                Username = username,
+                Password = password,
+                Role = role
+            };
+            string Token = CreateToken(u, u.Role);
+          
+            return Ok(new
+            {
+                User = u,
+                token = Token
+            });
+        }
+
+
+
         [HttpPost]
         [Route("CreateReview/{text}/{authorID}/{movieID}/{rating}")]
         public IActionResult CreateReview(string text, string authorID, string movieID, int rating)
