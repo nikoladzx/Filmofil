@@ -42,3 +42,6 @@ C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.I
 C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.AspNetCore.Http.Connections.Client.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.AspNetCore.SignalR.Client.dll
+C:\Users\nikol\OneDrive\Desktop\RedisBaza\RedisBaza\bin\Debug\net7.0\Microsoft.AspNetCore.SignalR.Client.Core.dll

@@ -65,6 +65,11 @@ namespace RedisBaza.Controllers
             long nextCounterKey = redis.Incr("next:movie:id");
             return nextCounterKey.ToString("x");
         }
+        private string GetNextCommentID()
+        {
+            long nextCounterKey = redis.Incr("next:comment:id");
+            return nextCounterKey.ToString("x");
+        }
 
 
         [HttpPost]
@@ -329,6 +334,38 @@ namespace RedisBaza.Controllers
             //var ratings = redis.GetAllItemsFromList("review:" + reviewID + ":rating");
             return Ok(new { reviews });
         }
+        [HttpPut]
+        [Route("EditReview/{reviewID}/{text}/{authorID}")]
+        public IActionResult EditReview(string reviewID, string text, string authorID)
+        {
+            var review = redis.Get<Review>("review:" + reviewID + ":review");
+            if (review.AuthorID != authorID)
+            {
+                return BadRequest("You cant edit a review that you haven't created");
+            }
+            review.Text = text;
+            redis.Set<Review>("review:" + reviewID + ":review", review);
+
+            return Ok(new { review });
+        }
+
+        [HttpDelete]
+        [Route("DeleteReview/{reviewID}/{authorID}")]
+        public IActionResult DeleteReview(string reviewID, string authorID)
+        {
+            var review = redis.Get<Review>("review:" + reviewID + ":review");
+            if (review.AuthorID != authorID)
+            {
+                return BadRequest("You cant delete a review that you haven't created");
+            }
+
+            redis.Remove("review:" + reviewID + ":review");
+            redis.RemoveItemFromList("movie:" + review.MovieID + ":review", reviewID);
+
+
+
+            return Ok("mz");
+        }
         [HttpGet]
         [Route("GetMovie/{movieID}")]
         public IActionResult GetMovie(string movieID)
@@ -356,6 +393,74 @@ namespace RedisBaza.Controllers
                 return Ok(new Movie { ID = movieID, Title = result, Description = result1, Rating = 0, NumberOfRatings = 0, PictureUrl = result4 });
             }
             return BadRequest("Movie with that ID doesnt exist at all :(");  
+        }
+        [HttpGet]
+        [Route("GetComments/{reviewID}")]
+        public IActionResult GetComments(string reviewID)
+        {
+            var comments = redis.GetAllItemsFromList("review:" + reviewID + ":comment");
+            return Ok(new { comments });
+        }
+        [HttpGet]
+        [Route("GetComment/{commentID}")]
+        public IActionResult GetComment(string commentID)
+        {
+            var comment = redis.Get<Comment>("comment:" + commentID + ":comment");
+            return Ok(new { comment });
+        }
+
+        [HttpPut]
+        [Route("EditComment/{commentID}/{text}/{authorID}")]
+        public IActionResult EditComment(string commentID, string text, string authorID)
+        {
+            var comment = redis.Get<Comment>("comment:" + commentID + ":comment");
+            if (comment.AuthorID != authorID)
+            {
+                return BadRequest("You cant edit a comment that you haven't created");
+            }
+            comment.Text = text;
+            redis.Set<Comment>("comment:" + commentID + ":comment", comment);
+
+            return Ok(new { comment });
+        }
+
+        [HttpDelete]
+        [Route("DeleteComment/{commentID}/{authorID}")]
+        public IActionResult DeleteComment(string commentID, string authorID)
+        {
+            var comment = redis.Get<Comment>("comment:" + commentID + ":comment");
+            if (comment.AuthorID != authorID)
+            {
+                return BadRequest("You cant delete a comment that you haven't created");
+            }
+            redis.Remove("comment:" + commentID + ":comment");
+
+            redis.RemoveItemFromList("review:" + comment.ReviewID + ":comment", commentID);
+
+            return Ok("Obrisano");
+        }
+
+        [HttpPost]
+        [Route("AddComment/{reviewID}/{authorID}/{text}")]
+        public IActionResult AddComment(string reviewID, string authorID, string text)
+        {
+            var id = GetNextCommentID();
+            Comment comment= new Comment
+                {
+                ID = id,
+                AuthorID = authorID,
+                Text = text,
+                ReviewID=reviewID,
+                Time = DateTime.Now,
+                Upvotes = 0,
+                Downvotes = 0,
+
+
+            };
+            redis.Set<Comment>("comment:" + id + ":comment", comment);
+            redis.PushItemToList("review:" + reviewID + ":comment", id);
+
+            return Ok("Uspesno");
         }
     }
 
