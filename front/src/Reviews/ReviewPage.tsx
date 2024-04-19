@@ -11,7 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import agent from '../API/agent';
 import { Movie } from '../Movies/movie';
 import RateReviewIcon from '@mui/icons-material/RateReview';
-import { Rating } from '@mui/material';
+import { Paper, Rating } from '@mui/material';
 import { ChangeEvent } from 'react';
 import { useAuth } from '../Context/useAuth';
 
@@ -67,6 +67,16 @@ export default function ReviewPage() {
 
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        <Paper
+        sx={{
+          p: 2,
+          margin: 'auto',
+          maxWidth: 555,
+          flexGrow: 1,
+          backgroundColor: (theme) =>
+            theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+        }}
+      >
         <Box
           sx={{
             marginTop: 8,
@@ -119,6 +129,7 @@ export default function ReviewPage() {
             
           </Box>
         </Box>
+        </Paper>
 
       </Container>
   );

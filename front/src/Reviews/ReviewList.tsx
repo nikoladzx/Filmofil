@@ -27,7 +27,7 @@ export default function ReviewList(){
                     
                          <Grid item xs={12} >
                          <ReviewCard review = {r}/>
-                         {r}
+                         
                      </Grid>
             )}
    

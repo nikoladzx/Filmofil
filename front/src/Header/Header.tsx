@@ -168,7 +168,7 @@ export default function Header() {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                <Avatar />
               </IconButton>
             </Tooltip>
             <Menu
@@ -188,7 +188,7 @@ export default function Header() {
               onClose={handleCloseUserMenu}
             >
              {user ? <><MenuItem>
-              <Typography textAlign="center">{user.username}</Typography>
+              <Typography textAlign="center">{user.username + " | " + user.role}</Typography>
             </MenuItem>
             <MenuItem onClick={() => logout()} >
             <Typography textAlign="center">{"Logout"}</Typography>
