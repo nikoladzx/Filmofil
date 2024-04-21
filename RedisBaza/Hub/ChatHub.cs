@@ -2,55 +2,54 @@
 using RedisBaza.Models;
 using ServiceStack.Redis;
 using System.Text.Json;
+using System.Threading.Channels;
 
 namespace RedisBaza.Hubs
 {
     public class ChatHub : Hub
     {
         private readonly static Dictionary<string, string> connections = new Dictionary<string, string>();
-
         readonly RedisClient redis = new("redis://localhost:6379");
+
         IRedisSubscription subscription;
-        public ChatHub()
+
+
+
+
+        public async Task JoinChat(UserConnection conn)
         {
-            subscription = redis.CreateSubscription();
-            subscription.OnMessage = (channel, msg) =>
-            {
-                var chatMessage = JsonSerializer.Deserialize<ChatMessage>(msg);
-                Clients.Client(connections[chatMessage.RecipientID]).SendAsync("ReceiveMessage", chatMessage);
-            };
-            new Thread(delegate () {
-                subscription.SubscribeToChannels("chat");
-            }).Start();
+            await Clients.All
+                .SendAsync("ReceiveMessage", "admin", $"{conn.Username} has joined");
         }
 
-        // Send a message
-        public async Task SendMessage(string senderID, string recipientID, string text)
+        public async Task JoinSpecificChatRoom(UserConnection conn)
         {
-            var message = new ChatMessage
-            {
-                SenderID = senderID,
-                RecipientID = recipientID,
-                Text = text,
-                Time = DateTime.Now
-
-            };
-            // Serialize message data
-            var messageData = JsonSerializer.Serialize(message);
-
-            // Publish message to Redis channel
-            redis.PublishMessage("chat", messageData);
+            await Groups.AddToGroupAsync(Context.ConnectionId, conn.ChatRoom);
+            //Subscribe(conn.Username);
+            //subscription = redis.CreateSubscription();
+            //redis.Subscribe(conn.ChatRoom);
+            //subscription.SubscribeToChannels(conn.ChatRoom);
+            
+            await Clients.Group(conn.ChatRoom)
+              .SendAsync("JoinSpecificChatRoom", "admin", $"{conn.Username} has joined {conn.ChatRoom}");
         }
 
-        public void Subscribe(string userID)
+        public async Task SendMessage(UserConnection conn, string msg)
         {
-            connections[userID] = Context.ConnectionId;
+            await Clients.Group(conn.ChatRoom)
+                .SendAsync("ReceiveSpecificMessage", conn.Username, msg);
+
+            redis.PublishMessage(conn.ChatRoom, msg);
         }
 
-        public void Unsubscribe(string userID)
+        public void Subscribe(string username)
         {
-            connections.Remove(userID);
+            connections[username] = Context.ConnectionId;
         }
 
+        public void Unsubscribe(string username)
+        {
+            connections.Remove(username);
+        }
     }
 }

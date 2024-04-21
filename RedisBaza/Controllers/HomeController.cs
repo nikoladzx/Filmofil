@@ -269,12 +269,20 @@ namespace RedisBaza.Controllers
             {
                 redis.Set(authorID + ":" + reviewID + ":clicku", 1);
                 redis.IncrBy("review:" + reviewID + ":upvotes", number);
+                var result = redis.Get<Review>("review:" + reviewID + ":review");
+                result.Upvotes++;
+                redis.RemoveItemFromSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID);
+                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, result.Upvotes - result.Downvotes);
                 return Ok("Congrats you've changed an zm!");
             }
             if (number < 0 && d == 1)
             {
                 redis.Set(authorID + ":" + reviewID + ":clicku", 0);
                 redis.IncrBy("review:" + reviewID + ":upvotes", number);
+                var result = redis.Get<Review>("review:" + reviewID + ":review");
+                result.Upvotes--;
+                redis.RemoveItemFromSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID);
+                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, result.Upvotes - result.Downvotes);
                 return Ok("Congrats you've changed an mz!");
             }
             return Ok("Caaaaa!");
@@ -291,12 +299,20 @@ namespace RedisBaza.Controllers
             {
                 redis.Set(authorID + ":" + reviewID + ":clickd", 1);
                 redis.IncrBy("review:" + reviewID + ":downvotes", number);
+                var result = redis.Get<Review>("review:" + reviewID + ":review");
+                result.Downvotes++;
+                redis.RemoveItemFromSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID);
+                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, result.Upvotes - result.Downvotes);
                 return Ok("Congrats you've changed an downvote!");
             }
             if (number < 0 && d==1)
             {
                 redis.Set(authorID + ":" + reviewID + ":clickd", 0);
                 redis.IncrBy("review:" + reviewID + ":downvotes", number);
+                var result = redis.Get<Review>("review:" + reviewID + ":review");
+                result.Downvotes--;
+                redis.RemoveItemFromSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID);
+                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, result.Upvotes - result.Downvotes);
                 return Ok("Congrats you've changed an downvote!");
             }
 

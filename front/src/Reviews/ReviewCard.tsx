@@ -42,7 +42,7 @@ export default function ReviewCard({review} : Prop)
         .catch(err => console.log(err))
     },[change])
     console.log(rev);
-  const {upvotes , downvotes , clicku , clickd } = {...votes}
+  const {upvotes, downvotes , clicku , clickd } = {...votes }
   function handleDownvote(): void {
     if (clickd === 0)
       {

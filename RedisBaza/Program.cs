@@ -74,14 +74,18 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapHub<ChatHub>("/chathub");
+
+app.MapHub<ChatHub>("/chat");
+
 app.UseCors(options =>
 {
-    options.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:5173");
+    options.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:5173", "http://localhost:5174");
 });
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();
