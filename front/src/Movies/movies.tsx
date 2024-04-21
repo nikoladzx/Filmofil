@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import agent from "../API/agent";
 import { Movie } from "./movie";
 import MovieCard from "./MovieCard";
-import React from "react";
 
 
 
 export default function Movies() {
+
 
     const [movies, setMovies] = useState<Movie[] | []>([]);
     useEffect(()=>{

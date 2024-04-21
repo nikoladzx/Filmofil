@@ -9,7 +9,8 @@ import ReviewList from './Reviews/ReviewList';
 import CommentList from './Comments/CommentsList';
 import { UserProvider } from './Context/useAuth';
 import CreateMovie from './Movies/CreateMovie';
-import ChatPage from './Chat/Chat';
+import Chat from './Chat/Chat';
+
 
 const router = createBrowserRouter([{
   path: '/',
@@ -46,11 +47,8 @@ const router = createBrowserRouter([{
 {
   path: '/comments/:reviewId',
   element: <CommentList/>
-},
-{
-  path: '/chat',
-  element: <ChatPage/>
 }
+
 ]);
 
 

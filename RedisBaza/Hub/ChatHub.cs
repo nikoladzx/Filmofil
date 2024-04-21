@@ -24,11 +24,15 @@ namespace RedisBaza.Hubs
 
         public async Task JoinSpecificChatRoom(UserConnection conn)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, conn.ChatRoom);
-            //Subscribe(conn.Username);
-            //subscription = redis.CreateSubscription();
-            //redis.Subscribe(conn.ChatRoom);
-            //subscription.SubscribeToChannels(conn.ChatRoom);
+              if (!connections.ContainsKey(conn.Username) || !connections[conn.Username].Contains(conn.ChatRoom))
+            {
+                Subscribe(conn.Username, conn.ChatRoom);
+                await Groups.AddToGroupAsync(Context.ConnectionId, conn.ChatRoom);
+
+            }
+                
+            
+            
             
             await Clients.Group(conn.ChatRoom)
               .SendAsync("JoinSpecificChatRoom", "admin", $"{conn.Username} has joined {conn.ChatRoom}");
@@ -36,15 +40,16 @@ namespace RedisBaza.Hubs
 
         public async Task SendMessage(UserConnection conn, string msg)
         {
+
             await Clients.Group(conn.ChatRoom)
                 .SendAsync("ReceiveSpecificMessage", conn.Username, msg);
 
             redis.PublishMessage(conn.ChatRoom, msg);
         }
 
-        public void Subscribe(string username)
+        public void Subscribe(string username, string chatroom)
         {
-            connections[username] = Context.ConnectionId;
+            connections[username] = chatroom;
         }
 
         public void Unsubscribe(string username)

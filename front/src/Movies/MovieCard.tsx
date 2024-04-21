@@ -1,8 +1,12 @@
-import {   Box, Button, ButtonBase, Grid, Paper, Rating, Typography, styled } from "@mui/material";
+import {   Box, Button, ButtonBase, Grid, Modal, Paper, Rating, Typography, styled } from "@mui/material";
 
 import { Movie } from "./movie";
 import { Link } from "react-router-dom";
-import React from "react";
+import React, {  useState } from "react";
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { ChatMessage } from "../Chat/chatmessage";
+import { useAuth } from "../Context/useAuth";
+import ChatRoom from "../Chat/ChatRoom";
 
 
 interface Props {
@@ -30,6 +34,58 @@ const labels: { [index: string]: string } = {
 };
 export default function MovieCard({movie} : Props)
 {
+  const {user} = useAuth();
+  const username = user?.username;
+ const chatroom = movie.title;
+  const [connection, setConnection] = useState<HubConnection | undefined>(undefined);
+  const [messages, setMessages] = useState<ChatMessage[] | []>([]);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    joinChatroom(username!,chatroom);
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setConnection(undefined);
+    setOpen(false);
+  };
+  const joinChatroom = async (username :string, chatroom :string) => {
+      try{
+          const conn = new HubConnectionBuilder()
+              .withUrl("https://localhost:7248/chat")
+              .configureLogging(LogLevel.Information)
+              .build();
+              console.log(conn.connectionId +"zs");
+              conn.on("JoinSpecificChatRoom", (username : string, text : string) => {
+              setMessages(messages => [...messages, {username, text}])
+              console.log(messages);
+              });
+
+              conn.on("ReceiveSpecificMessage", (username : string, text : string) => {
+                  setMessages(messages => [...messages, {username, text}])
+                  console.log(messages);
+              });
+              
+              await conn.start();
+            
+              await conn.invoke("JoinSpecificChatRoom", {username, chatroom});
+              setConnection(conn);
+             
+
+      }
+
+
+      catch(e) {
+          console.log(e);
+      }
+  }
+  const sendMessage = async(message : string) => {
+      try {
+          await connection?.invoke("SendMessage", {username, chatroom}, message)
+      }
+      catch (e){
+          console.log(e);
+      }
+  }
     return (
         <>    
         
@@ -56,10 +112,26 @@ export default function MovieCard({movie} : Props)
               <Typography gutterBottom variant="h4" component="div" sx = {{color: "primary.main"}} >
                 {movie.title}
               </Typography>
+              
+
+    {connection ? <Modal
+      
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="child-modal-title"
+        aria-describedby="child-modal-description"
+      >
+
+        <ChatRoom messages = {messages} sendMessage = {sendMessage}/>
+
+         
+         
+      </Modal> : <Button
+    onClick={handleOpen} > JOIN</Button>}
               </Grid>
               <Grid item xs>
               <Typography variant="body2" color="text.secondary" >
-              {" gfdsagdsfagewargas gsdfa gdsa gasd gar eswgras gsag eawsg sdag afsd geswa ga fdas fasd fsad fsa fdsaf sadf asdf sads "}
+              {movie.description}
               </Typography>
             </Grid>
             <Grid  container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' , pt: 4, pl: 5, mr : 2 }}>
