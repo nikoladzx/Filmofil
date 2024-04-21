@@ -29,6 +29,7 @@ export default function ChatRoom({messages, sendMessage} : Props){
 
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
         <TextField
+        value = {message}
         onChange={(event) => setMessage(event?.target.value)}>
 
         </TextField>
