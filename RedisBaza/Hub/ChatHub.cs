@@ -8,7 +8,7 @@ namespace RedisBaza.Hubs
 {
     public class ChatHub : Hub
     {
-        private readonly static Dictionary<string, string> connections = new Dictionary<string, string>();
+        private readonly static Dictionary<UserConnection, string > connections = new Dictionary<UserConnection, string>();
         readonly RedisClient redis = new("redis://localhost:6379");
 
         IRedisSubscription subscription;
@@ -24,18 +24,17 @@ namespace RedisBaza.Hubs
 
         public async Task JoinSpecificChatRoom(UserConnection conn)
         {
-              if (!connections.ContainsKey(conn.Username) || !connections[conn.Username].Contains(conn.ChatRoom))
+              if (!connections.ContainsKey(conn))
             {
-                Subscribe(conn.Username, conn.ChatRoom);
+                Subscribe(conn);
                 await Groups.AddToGroupAsync(Context.ConnectionId, conn.ChatRoom);
+                await Clients.Group(conn.ChatRoom)
+             .SendAsync("JoinSpecificChatRoom", "admin", $"{conn.Username} has joined {conn.ChatRoom}");
 
             }
                 
-            
-            
-            
-            await Clients.Group(conn.ChatRoom)
-              .SendAsync("JoinSpecificChatRoom", "admin", $"{conn.Username} has joined {conn.ChatRoom}");
+               
+           
         }
 
         public async Task SendMessage(UserConnection conn, string msg)
@@ -47,14 +46,14 @@ namespace RedisBaza.Hubs
             redis.PublishMessage(conn.ChatRoom, msg);
         }
 
-        public void Subscribe(string username, string chatroom)
+        public void Subscribe(UserConnection conn)
         {
-            connections[username] = chatroom;
+            connections[conn] = Context.ConnectionId;
         }
 
-        public void Unsubscribe(string username)
+        public void Unsubscribe(UserConnection conn)
         {
-            connections.Remove(username);
+            connections.Remove(conn);
         }
     }
 }

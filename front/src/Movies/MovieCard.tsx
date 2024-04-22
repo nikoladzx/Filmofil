@@ -45,7 +45,7 @@ export default function MovieCard({movie} : Props)
     setOpen(true);
   };
   const handleClose = () => {
-    setConnection(undefined);
+    connection?.stop();
     setOpen(false);
   };
   const joinChatroom = async (username :string, chatroom :string) => {
@@ -100,6 +100,8 @@ export default function MovieCard({movie} : Props)
         }}
       >
         <Grid item xs={6} sx ={{ml: 1}}>
+        <Button
+  onClick={handleOpen} >JOIN GROUP CHAT</Button>
          {connection ? <Modal
       
       open={open}
@@ -112,8 +114,7 @@ export default function MovieCard({movie} : Props)
 
        
        
-    </Modal> : <Button
-  onClick={handleOpen} >JOIN GROUP CHAT</Button>}
+    </Modal> : ""}
             </Grid>
         <Link to={"movies"}></Link>
    <Grid container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
