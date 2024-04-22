@@ -32,21 +32,21 @@ export default function CommentCard({comment} : Prop)
     console.log(com);
   const {upvotes , downvotes , clicku , clickd } = {...votes}
   function handleDownvote(): void {
-    if (clickd === 0)
-      {
-        agent.Home.addDownvote(user!.id, comment, 1)
-        .then(x => console.log(x))
-        .catch(err => console.log(err))
-        .finally(()=> setChange(true));
-      }
-      else 
-        {
-          agent.Home.addDownvote(user!.id, comment, -1)
-          .then(x => console.log(x))
-          .catch(err => console.log(err))
-          .finally(()=> setChange(false));
+    // if (clickd === 0)
+    //   {
+    //     agent.Home.addDownvote(user!.id, comment, 1)
+    //     .then(x => console.log(x))
+    //     .catch(err => console.log(err))
+    //     .finally(()=> setChange(true));
+    //   }
+    //   else 
+    //     {
+    //       agent.Home.addDownvote(user!.id, comment, -1)
+    //       .then(x => console.log(x))
+    //       .catch(err => console.log(err))
+    //       .finally(()=> setChange(false));
           
-        }
+    //     }
         
   }
 

@@ -6,6 +6,8 @@ import agent from "../API/agent";
 import { Review } from "./Review";
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { useAuth } from "../Context/useAuth";
 
 
@@ -41,7 +43,7 @@ export default function ReviewCard({review} : Prop)
         .then(r=> setVotes(r))
         .catch(err => console.log(err))
     },[change])
-    console.log(rev);
+
   const {upvotes, downvotes , clicku , clickd } = {...votes }
   function handleDownvote(): void {
     if (clickd === 0)
@@ -82,10 +84,22 @@ function handleUpvote(): void {
         }
   }
 
+
+  function handleDelete(): void {
+    user && agent.Home.deleteReview(review, user?.id)
+    .then(x => console.log(x))
+    .catch(err => console.log(err))
+
+    window.location.reload();
+
+    
+    
+  }
+
     return (
         <>  
-        
-        {rev?.rating + "ovo je rating"}
+
+
         <Paper
         sx={{
           p: 2,
@@ -120,18 +134,18 @@ function handleUpvote(): void {
         </Grid>
         </Grid>
         <Grid item xs={12} sm container >
-          <Grid item xs container direction="column" spacing={2}  sx = {{  justifyContent: 'center', alignItems: 'center', paddingBottom: 3, pr:3}}>
+          <Grid item xs container direction="column" spacing={2}  sx = {{  justifyContent: 'center', alignItems: 'center', paddingBottom: 3, pr:  8}}>
             <Grid item xs>
               <Typography gutterBottom variant="h4" component="div" sx = {{color: "primary.main"}} >
               <Box sx={{ color:"primary.main" }}>{labels[rev ? rev.rating : 0]}</Box>
               </Typography>
               </Grid>
-              <Grid item sx = {{mr : 3}}>
+              <Grid item sx = {{mr: 1}}>
               <Typography variant="body2" color="text.secondary" >
               {rev?.text}
               </Typography>
             </Grid>
-            <Grid  container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' , pt: 4, pl: 5, mr : 2 }}>
+            <Grid  container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' , pt: 4, pl: 7, mr : 2 }}>
               <Grid item xs={4} sx={{mv : 10, ml : -2}}>
               
               
@@ -155,8 +169,25 @@ function handleUpvote(): void {
             </Grid>
             
           </Grid>
-
+          <Grid item>
+            <Grid item xs={6}>
+              <Button onClick={handleDelete}>
+              <DeleteIcon > </DeleteIcon>
+              </Button>
+            
+            </Grid>
+            <Grid item xs={6}>
+              <Button component={Link} to={`/editreview/${rev?.id}/${user?.id}`}>
+              <EditIcon > </EditIcon>
+              </Button>
+            
+            </Grid>
+    
+          
+          </Grid>
+          
         </Grid>
+       
       </Grid>
         </Paper>
           </>

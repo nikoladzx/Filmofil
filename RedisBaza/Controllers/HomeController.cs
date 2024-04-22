@@ -83,6 +83,8 @@ namespace RedisBaza.Controllers
             redis.Set("movie:" + id + ":numberofratings", 0);
             redis.Set("movie:" + id + ":pictureurl", pictureurl);
             redis.AddItemToSet("movie:all", id);
+            redis.AddItemToSortedSet("movie:ratingsorted", id, 0);
+            redis.AddItemToSortedSet("movie:numbersorted", id, 0);
             return Ok(new { id });
         }
         [HttpDelete]
@@ -103,8 +105,8 @@ namespace RedisBaza.Controllers
             {
                 var result = redis.Get<string>("movie:" + id + ":title");
                 var result1 = redis.Get<string>("movie:" + id + ":description");
-                var result2 = Convert.ToDouble(redis.Get<string>("movie" + id + ":rating"));
-                var result3 = Convert.ToInt32(redis.Get<string>("movie" + id + ":numberofratings"));
+                var result2 = Convert.ToDouble(redis.Get<string>("movie:" + id + ":rating"));
+                var result3 = Convert.ToInt32(redis.Get<string>("movie:" + id + ":numberofratings"));
                 var result4 = redis.Get<string>("movie:" + id + ":pictureurl");
 
                 if (result3 != 0)
@@ -126,6 +128,75 @@ namespace RedisBaza.Controllers
             }
             return Ok(new { movies });
         }
+
+        [HttpGet]
+        [Route("GetMoviesRatingSorted")]
+        public IActionResult GetMoviesRatingSorted()
+        {
+            var resultList = redis.GetAllItemsFromSortedSetDesc("movie:ratingsorted");
+            List<Movie> movies = new List<Movie>();
+            foreach (var id in resultList)
+            {
+                var result = redis.Get<string>("movie:" + id + ":title");
+                var result1 = redis.Get<string>("movie:" + id + ":description");
+                var result2 = Convert.ToDouble(redis.Get<string>("movie:" + id + ":rating"));
+                var result3 = Convert.ToInt32(redis.Get<string>("movie:" + id + ":numberofratings"));
+                var result4 = redis.Get<string>("movie:" + id + ":pictureurl");
+
+                if (result3 != 0)
+                {
+                    double x = result2 / result3;
+                    double z = Math.Round(x, 2);
+
+
+                    movies.Add(new Movie { ID = id, Title = result, Description = result1, Rating = z, NumberOfRatings = result3, PictureUrl = result4 });
+                }
+                if (result3 == 0)
+                {
+                    double x = result2 / result3;
+                    double z = Math.Round(x, 2);
+
+
+                    movies.Add(new Movie { ID = id, Title = result, Description = result1, Rating = 0, NumberOfRatings = 0, PictureUrl = result4 });
+                }
+            }
+            return Ok(new { movies });
+        }
+        [HttpGet]
+        [Route("GetMoviesNumberSorted")]
+        public IActionResult GetMoviesNumberSorted()
+        {
+            var resultList = redis.GetAllItemsFromSortedSetDesc("movie:numbersorted");
+            List<Movie> movies = new List<Movie>();
+            foreach (var id in resultList)
+            {
+                var result = redis.Get<string>("movie:" + id + ":title");
+                var result1 = redis.Get<string>("movie:" + id + ":description");
+                var result2 = Convert.ToDouble(redis.Get<string>("movie:" + id + ":rating"));
+                var result3 = Convert.ToInt32(redis.Get<string>("movie:" + id + ":numberofratings"));
+                var result4 = redis.Get<string>("movie:" + id + ":pictureurl");
+
+                if (result3 != 0)
+                {
+                    double x = result2 / result3;
+                    double z = Math.Round(x, 2);
+
+
+                    movies.Add(new Movie { ID = id, Title = result, Description = result1, Rating = z, NumberOfRatings = result3, PictureUrl = result4 });
+                }
+                if (result3 == 0)
+                {
+                    double x = result2 / result3;
+                    double z = Math.Round(x, 2);
+
+
+                    movies.Add(new Movie { ID = id, Title = result, Description = result1, Rating = 0, NumberOfRatings = 0, PictureUrl = result4 });
+                }
+            }
+            return Ok(new { movies });
+        }
+
+
         [HttpPost]
         [Route("CreateUser/{username}/{password}/{role}")]
         public IActionResult CreateUser(string username, string password, bool role)
@@ -251,8 +322,14 @@ namespace RedisBaza.Controllers
 
 
 
-            redis.IncrBy("movie" + movieID + ":rating", rating);
-            redis.Incr("movie" + movieID + ":numberofratings");
+            redis.IncrBy("movie:" + movieID + ":rating", rating);
+            redis.Incr("movie:" + movieID + ":numberofratings");
+            var totalrating = redis.Get<double>("movie:" + movieID + ":rating");
+            var totalnumber = redis.Get<int>("movie:" + movieID + ":numberofratings");
+            redis.RemoveItemFromSortedSet("movie:ratingsorted", movieID);
+            redis.RemoveItemFromSortedSet("movie:numbersorted", movieID);
+            redis.AddItemToSortedSet("movie:ratingsorted", movieID, totalrating/totalnumber);
+            redis.AddItemToSortedSet("movie:numbersorted", movieID, totalnumber);
 
             return Ok("Congrats, you've added a movie!");
         }
@@ -271,9 +348,10 @@ namespace RedisBaza.Controllers
                 redis.IncrBy("review:" + reviewID + ":upvotes", number);
                 var result = redis.Get<Review>("review:" + reviewID + ":review");
                 result.Upvotes++;
+                redis.Set<Review>("review:" + reviewID + ":review", result);
                 redis.RemoveItemFromSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID);
-                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, result.Upvotes - result.Downvotes);
-                return Ok("Congrats you've changed an zm!");
+                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, (result.Upvotes - result.Downvotes));
+                return Ok(result.Upvotes + " mz " + result.Downvotes);
             }
             if (number < 0 && d == 1)
             {
@@ -281,11 +359,12 @@ namespace RedisBaza.Controllers
                 redis.IncrBy("review:" + reviewID + ":upvotes", number);
                 var result = redis.Get<Review>("review:" + reviewID + ":review");
                 result.Upvotes--;
+                redis.Set<Review>("review:" + reviewID + ":review", result);
                 redis.RemoveItemFromSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID);
-                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, result.Upvotes - result.Downvotes);
-                return Ok("Congrats you've changed an mz!");
+                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, (result.Upvotes - result.Downvotes));
+                return Ok(result.Upvotes + " mz " + result.Downvotes);
             }
-            return Ok("Caaaaa!");
+            return Ok("Greska!");
         }
         [HttpPost]
         [Route("AddDownvote/{authorID}/{reviewID}/{number}")]
@@ -301,9 +380,10 @@ namespace RedisBaza.Controllers
                 redis.IncrBy("review:" + reviewID + ":downvotes", number);
                 var result = redis.Get<Review>("review:" + reviewID + ":review");
                 result.Downvotes++;
+                redis.Set<Review>("review:" + reviewID + ":review", result);
                 redis.RemoveItemFromSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID);
-                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, result.Upvotes - result.Downvotes);
-                return Ok("Congrats you've changed an downvote!");
+                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, (result.Upvotes - result.Downvotes));
+                return Ok(result.Upvotes + " mz " + result.Downvotes);
             }
             if (number < 0 && d==1)
             {
@@ -311,12 +391,13 @@ namespace RedisBaza.Controllers
                 redis.IncrBy("review:" + reviewID + ":downvotes", number);
                 var result = redis.Get<Review>("review:" + reviewID + ":review");
                 result.Downvotes--;
+                redis.Set<Review>("review:" + reviewID + ":review", result);
                 redis.RemoveItemFromSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID);
-                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, result.Upvotes - result.Downvotes);
-                return Ok("Congrats you've changed an downvote!");
+                redis.AddItemToSortedSet("movie:" + result.MovieID + ":reviewssorted", reviewID, (result.Upvotes - result.Downvotes));
+                return Ok(result.Upvotes + " mz " + result.Downvotes);
             }
 
-            return Ok("Congrats you've changed an downvote!");
+            return Ok("Greska");
         }
         [HttpGet]
         [Route("GetReview/{reviewID}")]
@@ -350,17 +431,29 @@ namespace RedisBaza.Controllers
             //var ratings = redis.GetAllItemsFromList("review:" + reviewID + ":rating");
             return Ok(new { reviews });
         }
+        [HttpGet]
+        [Route("GetReviewsSorted/{movieID}")]
+        public IActionResult GetReviewsSorted(string movieID)
+        {
+            var reviews = redis.GetAllItemsFromSortedSetDesc("movie:" + movieID + ":reviewssorted");
+            return Ok(new { reviews });
+        }
         [HttpPut]
-        [Route("EditReview/{reviewID}/{text}/{authorID}")]
-        public IActionResult EditReview(string reviewID, string text, string authorID)
+        [Route("EditReview/{reviewID}/{text}/{rating}/{authorID}")]
+        public IActionResult EditReview(string reviewID, string text, int rating, string authorID)
         {
             var review = redis.Get<Review>("review:" + reviewID + ":review");
             if (review.AuthorID != authorID)
             {
                 return BadRequest("You cant edit a review that you haven't created");
             }
+            
+            var oldrating = redis.Get<Double>("movie:" + review.MovieID + ":rating");
+            redis.Set<Double>("movie:" + review.MovieID + ":rating", oldrating - review.Rating + rating);
             review.Text = text;
+            review.Rating = rating;
             redis.Set<Review>("review:" + reviewID + ":review", review);
+
 
             return Ok(new { review });
         }
@@ -374,9 +467,12 @@ namespace RedisBaza.Controllers
             {
                 return BadRequest("You cant delete a review that you haven't created");
             }
-
+            var rating = redis.Get<Double>("movie:" + review.MovieID + ":rating");
+            redis.Set<Double>("movie:" + review.MovieID + ":rating", rating- review.Rating);
+            redis.Decr("movie:" + review.MovieID + ":numberofratings");
             redis.Remove("review:" + reviewID + ":review");
             redis.RemoveItemFromList("movie:" + review.MovieID + ":review", reviewID);
+            redis.RemoveItemFromSortedSet("movie:" + review.MovieID + ":reviewssorted", reviewID);
 
 
 
@@ -388,8 +484,8 @@ namespace RedisBaza.Controllers
         {
             var result = redis.Get<string>("movie:" + movieID + ":title");
             var result1 = redis.Get<string>("movie:" + movieID + ":description");
-            var result2 = Convert.ToDouble(redis.Get<string>("movie" + movieID + ":rating"));
-            var result3 = Convert.ToInt32(redis.Get<string>("movie" + movieID + ":numberofratings"));
+            var result2 = Convert.ToDouble(redis.Get<string>("movie:" + movieID + ":rating"));
+            var result3 = Convert.ToInt32(redis.Get<string>("movie:" + movieID + ":numberofratings"));
             var result4 = redis.Get<string>("movie:" + movieID + ":pictureurl");
 
             if (result3 != 0)
@@ -413,6 +509,13 @@ namespace RedisBaza.Controllers
         [HttpGet]
         [Route("GetComments/{reviewID}")]
         public IActionResult GetComments(string reviewID)
+        {
+            var comments = redis.GetAllItemsFromList("review:" + reviewID + ":comment");
+            return Ok(new { comments });
+        }
+        [HttpGet]
+        [Route("GetCommentsSorted/{reviewID}")]
+        public IActionResult GetCommentsSorted(string reviewID)
         {
             var comments = redis.GetAllItemsFromList("review:" + reviewID + ":comment");
             return Ok(new { comments });
@@ -452,6 +555,7 @@ namespace RedisBaza.Controllers
             redis.Remove("comment:" + commentID + ":comment");
 
             redis.RemoveItemFromList("review:" + comment.ReviewID + ":comment", commentID);
+            redis.RemoveItemFromSortedSet("review:" + comment.ReviewID + ":commentsorted", commentID);
 
             return Ok("Obrisano");
         }
@@ -475,6 +579,7 @@ namespace RedisBaza.Controllers
             };
             redis.Set<Comment>("comment:" + id + ":comment", comment);
             redis.PushItemToList("review:" + reviewID + ":comment", id);
+            redis.AddItemToSortedSet("review:" + reviewID + ":commentsorted", id, comment.Upvotes-comment.Downvotes);
 
             return Ok("Uspesno");
         }

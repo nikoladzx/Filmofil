@@ -9,7 +9,7 @@ import ReviewList from './Reviews/ReviewList';
 import CommentList from './Comments/CommentsList';
 import { UserProvider } from './Context/useAuth';
 import CreateMovie from './Movies/CreateMovie';
-import Chat from './Chat/Chat';
+import EditReviewPage from './Reviews/EditReviewPage';
 
 
 const router = createBrowserRouter([{
@@ -27,6 +27,10 @@ const router = createBrowserRouter([{
 {
   path: '/addreview/:movieId',
   element: <ReviewPage/>
+},
+{
+  path: '/editreview/:reviewID/:authorID',
+  element: <EditReviewPage/>
 },
 {
   path: '/Login',

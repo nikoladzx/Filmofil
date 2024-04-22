@@ -99,37 +99,39 @@ export default function MovieCard({movie} : Props)
             theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
         }}
       >
+        <Grid item xs={6} sx ={{ml: 1}}>
+         {connection ? <Modal
+      
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="child-modal-title"
+      aria-describedby="child-modal-description"
+    >
+
+      <ChatRoom messages = {messages} sendMessage = {sendMessage}/>
+
+       
+       
+    </Modal> : <Button
+  onClick={handleOpen} >JOIN GROUP CHAT</Button>}
+            </Grid>
         <Link to={"movies"}></Link>
    <Grid container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+    
         <Grid item>
+          
           <ButtonBase sx={{ width: 155, height: 155 }}>
             <Img alt="complex" src={movie.pictureUrl}  />
           </ButtonBase>
         </Grid>
         <Grid item xs={12} sm container >
           <Grid item xs container direction="column" spacing={2}  sx = {{  justifyContent: 'center', alignItems: 'center', paddingBottom: 3, pr:3}}>
-            <Grid item xs>
+            <Grid item >
               <Typography gutterBottom variant="h4" component="div" sx = {{color: "primary.main"}} >
-                {movie.title}
+                {movie.title }
               </Typography>
-              
-
-    {connection ? <Modal
-      
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="child-modal-title"
-        aria-describedby="child-modal-description"
-      >
-
-        <ChatRoom messages = {messages} sendMessage = {sendMessage}/>
-
-         
-         
-      </Modal> : <Button
-    onClick={handleOpen} > JOIN</Button>}
               </Grid>
-              <Grid item xs>
+              <Grid item >
               <Typography variant="body2" color="text.secondary" >
               {movie.description}
               </Typography>
