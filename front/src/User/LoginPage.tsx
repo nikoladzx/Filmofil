@@ -26,18 +26,11 @@ export default function LoginPage() {
     const {loginUser} = useAuth();
     const navigate = useNavigate();
 
-  const handleSubmit = () => {
-//     agent.Home.login(username,password)
-//     .then((s)=> 
-//     {
-//         localStorage.setItem("token", s.token);
-//         localStorage.setItem("user", JSON.stringify(s.user));
-//         console.log(s.User);
-//         console.log(s.Token);
-//     })
-//    console.log(username);
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+  event.preventDefault();
   loginUser(username,password);
-  navigate('/movies');
+  navigate('/');
 
   
   }

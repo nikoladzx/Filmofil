@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import agent from "../API/agent";
 import { Movie } from "./movie";
 import MovieCard from "./MovieCard";
+import Header from "../Header/Header";
 
 
 
@@ -35,6 +36,7 @@ console.log(movies);
 
 return (
 <Grid container spacing ={2}>
+    <Header/>
 <Grid item xs={12} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <Button onClick={()=>setFilter("")}>Default</Button>
         <Button onClick={()=>setFilter("number")}>Number</Button>

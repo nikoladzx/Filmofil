@@ -28,7 +28,7 @@ export default function RegisterPage() {
     event.preventDefault();
     
     agent.Home.register(username, password, isAdmin)
-    .then(s => console.log(s))
+    
     .catch(err => console.log(err))
     .finally(()=> navigate("/"))
     

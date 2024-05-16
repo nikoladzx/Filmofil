@@ -26,7 +26,6 @@ export default function ReviewList(){
           }
 
     },[movieId, sort])
-    console.log(sort)
   function changeSort(): void {
    setSort(!sort);
   }

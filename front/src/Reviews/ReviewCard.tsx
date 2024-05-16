@@ -129,7 +129,9 @@ function handleUpvote(): void {
             
         </Grid>
         <Grid item xs = {12} sx ={{p: 2}}>
-            {rev?.time}
+        <Typography gutterBottom variant="h6" component="div" sx = {{color: "primary.main"}} >
+            {rev?.time.substring(8, 10) + "." + rev?.time.substring(5, 7) + "." + rev?.time.substring(0, 4)}
+            </Typography>
             
         </Grid>
         </Grid>

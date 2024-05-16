@@ -22,13 +22,16 @@ export default function CommentList(){
     console.log(comments)
     return (<>
       <UserProvider>
-        <Header/>  
-        <Grid container spacing ={2}>
+      
+      <Grid container spacing ={1}>
+        
+      <Header/>  
+
             
            
             {comments.map(c=>
                     
-                         <Grid item xs={12} >
+                         <Grid item xs={12} key={c}>
                          <CommentCard comment = {c}/>
  
                      </Grid>

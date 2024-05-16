@@ -29,9 +29,10 @@ export default function App() {
     <>
   <UserProvider>
 
-  <Grid container spacing={5} sx={{}}>
+  <Grid container spacing={1} sx={{}}>
+
   <Grid item xs={12}>
-  <Header/>
+  
   </Grid>
 
   <Grid item xs={12}>

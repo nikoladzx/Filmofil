@@ -2,8 +2,7 @@ import { Paper, Grid, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import agent from "../API/agent";
 import React, { useEffect, useState } from "react";
-import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+
 import { useAuth } from "../Context/useAuth";
 import { Comment } from "./comment";
 
@@ -15,22 +14,29 @@ export default function CommentCard({comment} : Prop)
 {
 
           const [com, setCom] = useState<Comment | null>(null)
+          const [username, setUsername] = useState<string>("");
   // const [clickUpvote, setClickUpvote] = useState (false);
   // const [clickDownvote, setClickDownvote] = useState (false);
     const [change, setChange] = useState(false);
     const {user} = useAuth();
-    const [votes, setVotes] = useState([]);
+
     useEffect(()=>{
         
         comment && agent.Home.getComment(comment)
         .then(r => setCom(r.comment))
         .catch(error => console.log(error));
-        comment && agent.Home.getVotes(comment, user!.id)
-        .then(r=> setVotes(r))
-        .catch(err => console.log(err))
-    },[change])
-    console.log(com);
-  const {upvotes , downvotes , clicku , clickd } = {...votes}
+        // comment && agent.Home.getVotes(comment, user!.id)
+        // .then(r=> setVotes(r))
+        // .catch(err => console.log(err))
+        com && agent.Home.getUsername(com.authorID)
+        .then(r=> setUsername(r.username))
+        .catch(c => console.log(c));
+        
+    },[])
+    com && agent.Home.getUsername(com.authorID)
+    .then(r=> setUsername(r.username))
+    .catch(c => console.log(c));
+  console.log(com?.authorID, username)
   function handleDownvote(): void {
     // if (clickd === 0)
     //   {
@@ -50,7 +56,7 @@ export default function CommentCard({comment} : Prop)
         
   }
 
-console.log(clicku +"mz?")
+
 
 function handleUpvote(): void {
  
@@ -88,7 +94,7 @@ function handleUpvote(): void {
 
         <Grid container xs = {2}> 
         <Grid item xs = {12} sx ={{p: 3}}>
-          <Typography sx = {{p: 1}}>{upvotes}</Typography>
+          {/* <Typography sx = {{p: 1}}>{upvotes}</Typography>
             {clicku ? <ThumbUpIcon color="primary" onClick={()=>handleUpvote()}></ThumbUpIcon> :
              <ThumbUpIcon  onClick={()=>handleUpvote()}></ThumbUpIcon>}
             
@@ -98,39 +104,30 @@ function handleUpvote(): void {
             {clickd ? <ThumbDownIcon color="primary" onClick={()=> handleDownvote()}></ThumbDownIcon> :
              <ThumbDownIcon  onClick={()=> handleDownvote()}></ThumbDownIcon>}
 
-            <Typography sx = {{pl: 1}}>{downvotes}</Typography>
+            <Typography sx = {{pl: 1}}>{downvotes}</Typography> */}
+            <Typography gutterBottom variant="h4" component="div" sx = {{color: "primary.main", pl: 1}} >
+                
+                {username}
+                </Typography>
             
         </Grid>
-        <Grid item xs = {12} sx ={{p: 2}}>
-            {com?.time}
+        <Grid item xs = {12} sx ={{pt: 15, pl:3}}>
+        <Typography gutterBottom variant="h6" component="div" sx = {{color: "primary.main"}} >
+            {com?.time.substring(8, 10) + "." + com?.time.substring(5, 7) + "." + com?.time.substring(0, 4)}
+            </Typography>
             
         </Grid>
         </Grid>
         <Grid item xs={12} sm container >
           <Grid item xs container direction="column" spacing={2}  sx = {{  justifyContent: 'center', alignItems: 'center', paddingBottom: 3, pr:3}}>
-            <Grid item xs>
-              <Typography gutterBottom variant="h4" component="div" sx = {{color: "primary.main"}} >
-              {com?.authorID}
-              </Typography>
-              </Grid>
+            
               <Grid item sx = {{mr : 3}}>
               <Typography variant="body2" color="text.secondary" >
               {com?.text}
              
               </Typography>
             </Grid>
-            <Grid  container spacing={2} sx = {{ display: 'flex', justifyContent: 'center', alignItems: 'center' , pt: 4, pl: 5, mr : 2 }}>
-              <Grid item xs={4} sx={{mv : 10, ml : -2}}>
-              
-              
-              </Grid>
-              
-            
-              <Grid item xs = {3} sx={{ mt:7 }}>
-              
-             
-          </Grid>
-            </Grid>
+
             
           </Grid>
 

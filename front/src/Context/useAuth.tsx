@@ -65,13 +65,13 @@ const loginUser = async (
         localStorage.setItem("user", JSON.stringify(res.user));
         setUser(res.user);
         setToken(res.token);
-        console.log(res.user);
         
     }
     
 }
 )
 .catch(error=>console.log(error))
+
 
 const logout = () =>
     {

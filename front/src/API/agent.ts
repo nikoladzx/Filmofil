@@ -26,6 +26,7 @@ const Home = {
     listrating: () => requests.get('/GetMoviesRatingSorted'),
     addMovie: (title : string, description :string, pictureurl : string) => requests.post(`createmovie/${title}/${description}/${pictureurl}`,{}),
     getMovie: (id : string) => requests.get(`GetMovie/${id}`),
+    getUsername: (userID : string) => requests.get(`GetUsername/${userID}`),
     getReviews: (id : string) => requests.get(`GetReviews/${id}`),
     getReviewsSorted: (id : string) => requests.get(`GetReviewsSorted/${id}`),
     getReview: (id : string) => requests.get(`GetReview/${id}`),
