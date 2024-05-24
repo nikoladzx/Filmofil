@@ -208,6 +208,7 @@ namespace RedisBaza.Controllers
             //{ return BadRequest("Vec postoji neko sa tim usernameom"); }
             redis.Set(username + ":pw:", password);
             redis.Set(username + ":id:", id);
+            redis.Set("user:" + id + ":username", username);
             var users = redis.GetAllItemsFromSet(username);
             if (role == false)
              redis.Set(username + ":role:", "User");
@@ -230,7 +231,7 @@ namespace RedisBaza.Controllers
         public IActionResult GetUserUsername(string userID)
         {
             var username = redis.Get<string>("user:" + userID + ":username");
-            if (username != null)
+            if (username == null)
             {
                 return BadRequest("Username doesnt exist");
             }
