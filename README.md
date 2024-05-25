@@ -6,4 +6,4 @@ npm install
 
 npm install axios
 
-npm run start
+npm run dev
