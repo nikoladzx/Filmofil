@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6+XjCWuxXSg5QMU3Xxk+I+I+ql+ZnvLM3f6e1bUmL8njOPaRF+Fa+SAcfGLxGim8KEmqgseZ5NGPTFnUrFVK4g==",
+  "dgSpecHash": "DJ+/dpuBzk49fJaVKLhekkcgVJ5A28+Km35a0bC7rZNvaQPZTCs//HpQu1y+OrWdz0X5XO6F4SFOHgHQQZmlgQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\nikol\\OneDrive\\Desktop\\RedisBaza\\RedisBaza\\RedisBaza.csproj",
+  "projectFilePath": "F:\\Filmofil\\RedisBaza\\RedisBaza.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\nikol\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\7.0.0\\microsoft.aspnetcore.authentication.jwtbearer.7.0.0.nupkg.sha512",
     "C:\\Users\\nikol\\.nuget\\packages\\microsoft.aspnetcore.connections.abstractions\\7.0.0\\microsoft.aspnetcore.connections.abstractions.7.0.0.nupkg.sha512",

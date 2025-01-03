@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\nikol\\OneDrive\\Desktop\\RedisBaza\\RedisBaza\\RedisBaza.csproj": {}
+    "F:\\Filmofil\\RedisBaza\\RedisBaza.csproj": {}
   },
   "projects": {
-    "C:\\Users\\nikol\\OneDrive\\Desktop\\RedisBaza\\RedisBaza\\RedisBaza.csproj": {
+    "F:\\Filmofil\\RedisBaza\\RedisBaza.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\nikol\\OneDrive\\Desktop\\RedisBaza\\RedisBaza\\RedisBaza.csproj",
+        "projectUniqueName": "F:\\Filmofil\\RedisBaza\\RedisBaza.csproj",
         "projectName": "RedisBaza",
-        "projectPath": "C:\\Users\\nikol\\OneDrive\\Desktop\\RedisBaza\\RedisBaza\\RedisBaza.csproj",
+        "projectPath": "F:\\Filmofil\\RedisBaza\\RedisBaza.csproj",
         "packagesPath": "C:\\Users\\nikol\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\nikol\\OneDrive\\Desktop\\RedisBaza\\RedisBaza\\obj\\",
+        "outputPath": "F:\\Filmofil\\RedisBaza\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
